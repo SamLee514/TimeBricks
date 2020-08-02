@@ -12,23 +12,35 @@ import { useStaticQuery, graphql } from "gatsby"
  * - `useStaticQuery`: https://www.gatsbyjs.org/docs/use-static-query/
  */
 
-class Brick {
-    constructor(name, dur) {
+export default class Brick {
+    name: string;
+    dur: number;
+    constructor(name: string, dur: number) {
         this.name = name;
         this.dur = dur;
     }
 }
 
-class List {
-    list: Brick[];
-    constructor() {
-        this.list = [];
-    }
-    add(brick: Brick) {
-        this.list.push(brick);
-    }
-}
+// class List {
+//     list: Brick[];
+//     constructor(list?: Brick[]) {
+//         if (list) {
+//             this.list = list;
+//         } else {
+//             this.list = [];
+//         }
+        
+//     }
+//     add(brick: Brick) {
+//         this.list.push(brick);
+//     }
+//     pop() {
+//         if (this.list.length == 0) {
+//             throw new Error('Attempting to pop brick from empty list')
+//         }
+//         const popped = this.list[this.list.length - 1];
+//         this.list = this.list[0:this.list.length - 1];
 
-function makeList()
-
-export default Image
+        
+//     }
+// }

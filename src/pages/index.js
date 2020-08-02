@@ -6,6 +6,7 @@ import Image from "../components/image"
 import SEO from "../components/seo"
 
 const IndexPage = () => (
+  // Leaving this style in bc lazy but fix it plz lol
   <Layout>
     <SEO title="Home" />
     <h1>Hi people</h1>

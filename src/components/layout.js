@@ -7,26 +7,29 @@
 
 import React from "react"
 import PropTypes from "prop-types"
-import { useStaticQuery, graphql } from "gatsby"
-import Timer from './timer/timer'
+// import { useStaticQuery, graphql } from "gatsby"
+import TimerRunner from './timer/timer'
 
-import Header from "./header"
+// import Header from "./header"
 import "./layout.css"
 
 const Layout = ({ children }) => {
-  const data = useStaticQuery(graphql`
-    query SiteTitleQuery {
-      site {
-        siteMetadata {
-          title
-        }
-      }
-    }
-  `)
+  // const data = useStaticQuery(graphql`
+  //   query SiteTitleQuery {
+  //     site {
+  //       siteMetadata {
+  //         title
+  //       }
+  //     }
+  //   }
+  // `)
 
   return (
     <>
-      <Header siteTitle={data.site.siteMetadata.title} />
+      {/* <Header siteTitle={data.site.siteMetadata.title}
+        style={{
+          background: '#5E81AC !important'
+        }} /> */}
       <div
         style={{
           margin: `0 auto`,
@@ -34,14 +37,14 @@ const Layout = ({ children }) => {
           padding: `0 1.0875rem 1.45rem`,
         }}
       >
-        <main>
-          <Timer />
-          {children}
+        <main >
+          <TimerRunner />
+          {/* {children} */}
         </main>
         <footer>
-          © {new Date().getFullYear()}, Built with
+          {/* © {new Date().getFullYear()}, Built with
           {` `}
-          <a href="https://www.gatsbyjs.org">Gatsby</a>
+          <a href="https://www.gatsbyjs.org">Gatsby</a> */}
         </footer>
       </div>
     </>

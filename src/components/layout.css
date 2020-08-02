@@ -7,7 +7,13 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
 }
+
+main {
+  margin-top: 40px;
+}
+
 article,
 aside,
 details,

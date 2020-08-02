@@ -1,127 +1,114 @@
 import React, { useState, useEffect } from 'react';
 import * as styles from './timer.module.css'
+import Brick from '../brick';
 
-// TODO: this should be manipulated by the interface
-const duration = 3;
+const TimerRunner = props => {
+  // Make this constant for now
+  const defaultBrickList = [
+    new Brick('Y333333 BRICKS', 10),
+    new Brick('brick brick brick', 1),
+    new Brick('I am the third brick', 1),
+    new Brick('I am the second brick', 300)
+  ];
 
-
-const Timer = () => {
-  const [seconds, setSeconds] = useState(duration);
+  const [brickList, updateBrickList] = useState(defaultBrickList);
   const [isActive, setIsActive] = useState(false);
+  // TODO: this placeholder is prone to user abuse -> figure out a way to use null
+  const [currentBrick, setCurrentBrick] = useState(new Brick('I am a placeholder', 0));
+  const [dur, updateDur] = useState(currentBrick.dur); // TODO: a lil redundant
+  const toggleActive = () => setIsActive(!isActive);
 
-  function toggle() {
-    setIsActive(!isActive);
-  }
+  // TODO: is null valid here?
+  const [curBrick, setCurBrick] = useState(null);
 
-  function reset() {
-    setSeconds(duration);
-    setIsActive(false);
+  const addToEnd = () => {
+    // TODO: Need to make this parameterized
+    const brick = new Brick('hi', 3);
+    const newList = [...brickList];
+    newList.push(brick);
+    updateBrickList(newList);
+  };
+  const addToTop = () => {
+    // TODO: Need to make this parameterized
+    const brick = new Brick('bye', 3);
+    const newList = [brick, ...brickList];
+    updateBrickList(newList);
+  };
+
+  // Wrapper function for updateBrickList because idk if u can directly update
+  const getNextBrick = () => {
+    const newList = [...brickList];
+    const brick = newList.pop()
+    updateBrickList(newList);
+    return brick;
   }
 
   useEffect(() => {
     let interval = null;
+    // TODO: might be worth it to fix the logic on this thing
     if (isActive) {
-      // Tells React to run setSeconds at intervals of 1000 ms
       interval = setInterval(() => {
-        setSeconds(seconds => seconds - 1);
+        console.log('Timer running!');
+        if (dur == 0 && brickList.length != 0) {
+          const nextBrick = getNextBrick();
+          setCurrentBrick(nextBrick);
+          updateDur(nextBrick.dur);
+        } else if (dur != 0) {
+          updateDur(dur - 1);
+        } else {
+          clearInterval(interval)
+        }
       }, 1000);
-    } else if (!isActive && seconds !== duration) {
-      // Tells React to stop running the intervals
+    }
+    else {
       clearInterval(interval);
     }
+
+    // cleanup, though I don't yet understand the repercussions of not cleaning
     return () => clearInterval(interval);
-    // NOTE: the following line is telling useEffect which vars to watch for
-  }, [isActive, seconds]);
+  }, [isActive, brickList, currentBrick, dur]);
 
-  return (
-    <div className='app'>
-      <div className='time'>
-        {/* TODO: Modify this so it displays in HH:MM:SS format*/}
-        {seconds}s
-      </div>
-      <div className='row'>
-        <button className={`button button-primary button-primary-${isActive ? 'active' : 'inactive'}`} onClick={toggle}>
-          {isActive ? 'Pause' : 'Start'}
-        </button>
-        <button className='button' onClick={reset}>
-          Reset
-        </button>
-      </div>
+  // TODO: factor out into a new component
+  // functions for setting brick with tesxt input
+  const [newNameField, setNewNameField] = useState('Default Brick!');
+  const [newTimeField, setNewTimeField] = useState('3');
+  const handleNameChange = e => setNewNameField(e.target.value);
+  const handleTimeChange = e => setNewTimeField(e.target.value);
+
+  const handleSubmit = e => {
+    const brick = new Brick(newNameField, Number(newTimeField));
+    const newList = [...brickList];
+    newList.push(brick);
+    updateBrickList(newList);
+    e.preventDefault();
+  }
+
+  return(
+    <div id={styles.timer}>
+      <div id={styles.currentBrick}>{currentBrick.name} {dur}</div>
+      {/* TODO: Temporary solution to toggle active, will need something more integrated later */}
+      {/* <form>
+        <label htmlFor='brickName'>Brick name</label>
+        <br></br>
+        <input type='text' id='brickName'></input>
+      </form> */}
+      <button onClick={toggleActive}>Toggle</button>
+      <button onClick={addToEnd}>Add to end</button>
+      <button onClick={addToTop}>Add to top</button>
+     
+      {/* TODO: Should move away from using index for key */}
+      <ul>{brickList.map((brick, index) =>
+        <div className={styles.brick}> {brick.name} {brick.dur}</div>
+      )}</ul>
+      
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={newNameField} onChange={handleNameChange}/>
+        <input type="text" value={newTimeField} onChange={handleTimeChange}/>
+        <input type='submit' value='Add' />
+      </form>
+      
     </div>
-  );
-};
+  )
+}
 
-export default Timer;
-
-
-
-
-
-
-
-// const calculateTimeLeft = () => {
-//   const difference = new Date('2020-08-01').getTime() + new Date().getTime();
-//   let timeLeft = {};
-
-//   if (difference > 0) {
-//     timeLeft = {
-//       hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-//       minutes: Math.floor((difference / (1000 * 60)) % 60),
-//       seconds: Math.floor((difference / 1000) % 60)
-//     };
-//   }
-
-//   return timeLeft;
-// }
-
-// const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-
-// // useEffect allows the effect to take place at every re-reender.
-// // It also allows the effects to happen asynchronously
-// // 
-// useEffect(() => {
-//   setTimeout(() => {
-//     setTimeLeft(calculateTimeLeft());
-//   }, 1000);
-// })
-
-// const timerComponents = [];
-
-// Object.keys(timeLeft).forEach(interval => {
-//   if (!timeLeft[interval]) {
-//     return;
-//   }
-
-//   timerComponents.push(
-//     <span>
-//       {timeLeft[interval]} {interval}{" "}
-//     </span>
-//   );
-// });
-
-
-
-
-
-
-// const About: React.FC<{}> = () => {
-//   <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
-//   const topText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum'
-//   const bottomText = 'Jeffrey Woods, also more commonly known as Jeff the Killer, is the titular villainous protagonist of the creepypasta story of the same name by the brother of GameFuelTv, who loses his sanity and becomes a serial killer to satisfy his homicidal urges. Jeff became one of the largest creepypasta icons to date, even rivaling Slender Man of all creepypastas. He is a teenage boy, who was a caring youth and deeply cared about his brother Liu. As a killer, this changed and he became a vengeful, dangerous, and bloodthirsty sociopath.'
-//   const [arrowDirection, setArrowDirection] = useState('down');
-//   const [content, setContent] = useState(topText)
-//   function toggleDisplay() {
-//     arrowDirection == 'up' ? setArrowDirection('down') : setArrowDirection('up');
-//     content == topText ? setContent(bottomText) : setContent(topText);
-//   }
-//   return (
-//     <div id={styles.about} className='nes-container is-dark is-rounded'>
-//       <div id={styles.text}>
-//         {content}
-//         {/* TODO: Make the text slide up and down */}
-//       </div>
-//       <img id={styles[arrowDirection]} onClick={toggleDisplay} src={DownArrow} alt="DownArrow" />
-//     </div>
-//   )
-// }
-// export default About
+export default TimerRunner
